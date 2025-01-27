@@ -1,4 +1,4 @@
-type Cell = '.' | '*' | number; // A cell can be empty ('.'), a mine ('*'), or a number (neighboring mines)
+export type Cell = '.' | '*' | number; // A cell can be empty ('.'), a mine ('*'), or a number (neighboring mines)
 export type Grid = Cell[][]; // The map is a 2D array of cells
 export type Coordinate = [number, number]; // Coordinates are represented as tuples of [x, y]
 
