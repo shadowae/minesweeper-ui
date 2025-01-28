@@ -20,7 +20,6 @@ function App() {
                 style={{
                     display: "grid",
                     gridTemplateColumns: `repeat(${map[0]?.length || 0}, 40px)`,
-                    gap: "5px",
                 }}
             >
                 {map.map((row, rowIndex) =>
@@ -34,8 +33,9 @@ function App() {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                border: "1px solid black",
-                                backgroundColor: "lightgray",
+                                border: "2px solid lightblue",
+                                backgroundColor: "peachpuff",
+                                color: "black",
                             }}
                         >
                             {cell === "." ? "" : cell} {/* Show nothing for empty cells */}
