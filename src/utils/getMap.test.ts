@@ -1,21 +1,8 @@
 /* eslint-env jest */
-import {generateArray, addMines, validCoordinates, Coordinate, Grid} from './getMap'
+import {addMines, validCoordinates, Coordinate, Grid} from './getMap.tsx'
+import generateArray from './generateArray'
 const mapSize: Coordinate = [3,3];
-const templateMap: Grid = [
-	[".", ".", "."],
-	[".", ".", "."],
-	[".", ".", "."]
-]
 
-describe('Init Stage: ', () => {
-	test('create init array', () => {
-		expect(generateArray([0, 0])).toEqual([]);
-	});
-	
-	test('correct array of 4,3 is generated', () => {
-		expect(generateArray(mapSize)).toEqual(templateMap);
-	})
-});
 
 describe('validCoordinates check: ', () => {
 	const map = generateArray(mapSize)

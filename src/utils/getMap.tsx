@@ -1,19 +1,8 @@
+import generateArray from './generateArray'
+
 export type Cell = '.' | '*' | number; // A cell can be empty ('.'), a mine ('*'), or a number (neighboring mines)
 export type Grid = Cell[][]; // The map is a 2D array of cells
 export type Coordinate = [number, number]; // Coordinates are represented as tuples of [x, y]
-
-export const generateArray = ([width, length]: [number, number]): Grid => {
-	const array: Grid = [];
-	if (length === 0 || width === 0) {
-		return array;
-	}
-	
-	for (let i = 0; i < length; i++) {
-		array.push(new Array(width).fill('.') as Cell[]); // Fills the array with "." initially
-	}
-	
-	return array;
-};
 
 export const validCoordinates = (map: Grid, [x, y]: Coordinate): boolean => {
 	const validX = x >= 0 && x < map.length; // Ensure x is within bounds

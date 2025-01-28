@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import getMap, { Grid } from "./getMap.tsx";
+import getMap, { Grid } from "./utils/getMap.tsx";
 import './App.css'
 
 function App() {
