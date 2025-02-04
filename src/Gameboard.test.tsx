@@ -82,4 +82,33 @@ describe("Gameboard Component", () => {
 		expect(distribution["2"]).toBe(2);
 		expect(distribution[""]).toBe(24);
 	});
+	
+	test("renders a 8x8 grid with 5 mines and counts the numbered cells correctly", async () => {
+		render(<Gameboard gridSize={[8, 8]} minePositions={[[1, 1],[5,5],[4,3],[4,4],[4,5]]} />);
+		
+		await waitFor(() => {
+			const totalCells =
+				screen.getAllByTestId("cell").length +
+				screen.getAllByTestId("cell-mine").length;
+			expect(totalCells).toBe(64);
+		});
+		
+		const mineCells = screen.getAllByTestId("cell-mine");
+		expect(mineCells.length).toBe(5);
+		
+		const nonMineCells = screen.getAllByTestId("cell");
+		expect(nonMineCells.length).toBe(59);
+		
+		const distribution: Record<string, number> = {};
+		nonMineCells.forEach((cell) => {
+			const content = cell.textContent || "";
+			distribution[content] = (distribution[content] || 0) + 1;
+		});
+		
+		expect(distribution["1"]).toBe(15);
+		expect(distribution["2"]).toBe(5);
+		expect(distribution["3"]).toBe(1);
+		expect(distribution["4"]).toBe(1);
+		expect(distribution[""]).toBe(37);
+	});
 });
