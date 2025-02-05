@@ -12,6 +12,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 	const [map, setMap] = useState<Grid>([]);
 	const [cellStates, setCellStates] = useState<CellStatus[][]>([]);
 	const [showConfetti, setShowConfetti] = useState(false);
+	const [gameOver, setGameOver] = useState(false);
 	
 	useEffect(() => {
 		const newMap = getMap(gridSize, minePositions);
@@ -21,6 +22,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 		);
 		setCellStates(initialStates);
 		setShowConfetti(false);
+		setGameOver(false);
 	}, [gridSize, minePositions]);
 	
 	function handleCellClick(rowIndex: number, colIndex: number) {
@@ -33,6 +35,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 				return newStates;
 			});
 			setShowConfetti(true);
+			setGameOver(true);
 			return;
 		}
 		setCellStates((prevStates) => {
@@ -52,6 +55,17 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 			newStates[rowIndex][colIndex] = currentStatus === "flagged" ? "hidden" : "flagged";
 			return newStates;
 		});
+	}
+	
+	function handleRestart() {
+		const newMap = getMap(gridSize, minePositions);
+		setMap(newMap);
+		const initialStates: CellStatus[][] = newMap.map((row) =>
+			row.map((): CellStatus => "hidden")
+		);
+		setCellStates(initialStates);
+		setShowConfetti(false);
+		setGameOver(false);
 	}
 	
 	return (
@@ -77,7 +91,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 							<div
 								key={`${rowIndex}-${colIndex}`}
 								data-testid={cell === "*" ? "cell-mine" : "cell"}
-								onClick={() => handleCellClick(rowIndex, colIndex)}
+								onClick={() => !gameOver && handleCellClick(rowIndex, colIndex)}
 								onContextMenu={(e) => handleCellRightClick(e, rowIndex, colIndex)}
 								style={{
 									width: "40px",
@@ -99,6 +113,24 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 			</div>
 			{showConfetti && (
 				<Confetti width={window.innerWidth} height={window.innerHeight} data-testid="confetti" />
+			)}
+			{gameOver && (
+				<div
+					data-testid="game-over-modal"
+					style={{
+						position: "fixed",
+						top: "50%",
+						left: "50%",
+						transform: "translate(-50%, -50%)",
+						backgroundColor: "white",
+						padding: "20px",
+						border: "2px solid black",
+						zIndex: 1000
+					}}
+				>
+					<p>Game Over!</p>
+					<button onClick={handleRestart}>Try Again?</button>
+				</div>
 			)}
 		</>
 	);

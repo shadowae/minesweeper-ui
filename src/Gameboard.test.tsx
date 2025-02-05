@@ -246,3 +246,34 @@ describe("Gameboard - Explosion and Confetti", () => {
 		});
 	});
 });
+
+describe("Gameboard - Modal on Game Over", () => {
+	test("clicking on a mine shows explosion icon, plays confetti, and displays game over modal with 2 buttons", async () => {
+		const gridSize: [number, number] = [3, 3];
+		const minePositions: Coordinate[] = [[0, 0]];
+		render(<Gameboard gridSize={gridSize} minePositions={minePositions} />);
+		await waitFor(() => {
+			const cells = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			expect(cells.length).toBe(9);
+		});
+		const mineCell = screen.getByTestId("cell-mine");
+		fireEvent.click(mineCell);
+		await waitFor(() => {
+			expect(mineCell.textContent).toBe("💥");
+		});
+		await waitFor(() => {
+			const confetti = screen.getByTestId("confetti");
+			expect(confetti).toBeInTheDocument();
+		});
+		await waitFor(() => {
+			const modal = screen.getByTestId("game-over-modal");
+			expect(modal).toBeInTheDocument();
+			expect(modal).toHaveTextContent("Game Over!");
+			const buttons = modal.querySelectorAll("button");
+			expect(buttons.length).toBe(1);
+		});
+	});
+});
