@@ -269,11 +269,44 @@ describe("Gameboard - Modal on Game Over", () => {
 			expect(confetti).toBeInTheDocument();
 		});
 		await waitFor(() => {
-			const modal = screen.getByTestId("game-over-modal");
+			const modal = screen.getByTestId("game-modal");
 			expect(modal).toBeInTheDocument();
 			expect(modal).toHaveTextContent("Game Over!");
 			const buttons = modal.querySelectorAll("button");
 			expect(buttons.length).toBe(1);
+			expect(buttons[0].textContent).toBe('Try Again?')
+		});
+	});
+});
+
+describe("Gameboard - Winning Game Condition", () => {
+	test("winning condition triggers win modal", async () => {
+		const gridSize: [number, number] = [3, 3];
+		const minePositions: Coordinate[] = [[0, 0]];
+		render(<Gameboard gridSize={gridSize} minePositions={minePositions} />);
+		await waitFor(() => {
+			const cells = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			expect(cells.length).toBe(9);
+		});
+		const mineCell = screen.getByTestId("cell-mine");
+		fireEvent.contextMenu(mineCell);
+		await waitFor(() => {
+			expect(mineCell.textContent).toBe("🚩");
+		});
+		const nonMineCells = screen.getAllByTestId("cell");
+		nonMineCells.forEach((cell) => {
+			fireEvent.click(cell);
+		});
+		await waitFor(() => {
+			const modal = screen.getByTestId("game-modal");
+			expect(modal).toBeInTheDocument();
+			expect(modal).toHaveTextContent("You Win!");
+			const buttons = modal.querySelectorAll("button");
+			expect(buttons.length).toBe(1);
+			expect(buttons[0].textContent).toBe('Try Again?')
 		});
 	});
 });

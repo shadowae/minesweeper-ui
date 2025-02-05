@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+// Gameboard.tsx
+import {useCallback, useEffect, useState} from "react";
 import getMap, { Coordinate, Grid } from "./utils/getMap";
 import { CellStatus } from "./types/cellStatus.ts";
 import Confetti from "react-confetti";
@@ -13,6 +14,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 	const [cellStates, setCellStates] = useState<CellStatus[][]>([]);
 	const [showConfetti, setShowConfetti] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
+	const [gameWin, setGameWin] = useState(false);
 	
 	useEffect(() => {
 		const newMap = getMap(gridSize, minePositions);
@@ -23,7 +25,29 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 		setCellStates(initialStates);
 		setShowConfetti(false);
 		setGameOver(false);
+		setGameWin(false);
 	}, [gridSize, minePositions]);
+	
+	const checkWin = useCallback((states: CellStatus[][]): boolean => {
+		for (let i = 0; i < map.length; i++) {
+			for (let j = 0; j < map[i].length; j++) {
+				if (map[i][j] === "*") {
+					if (states[i][j] !== "flagged") return false;
+				} else {
+					if (states[i][j] !== "revealed") return false;
+				}
+			}
+		}
+		return true;
+	}, [map]);
+	
+	useEffect(() => {
+		if (!gameOver && !gameWin && cellStates.length > 0) {
+			if (checkWin(cellStates)) {
+				setGameWin(true);
+			}
+		}
+	}, [cellStates, gameOver, gameWin, map]);
 	
 	function handleCellClick(rowIndex: number, colIndex: number) {
 		if (map[rowIndex][colIndex] === "*") {
@@ -66,6 +90,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 		setCellStates(initialStates);
 		setShowConfetti(false);
 		setGameOver(false);
+		setGameWin(false);
 	}
 	
 	return (
@@ -114,9 +139,9 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 			{showConfetti && (
 				<Confetti width={window.innerWidth} height={window.innerHeight} data-testid="confetti" />
 			)}
-			{gameOver && (
+			{(gameOver || gameWin) && (
 				<div
-					data-testid="game-over-modal"
+					data-testid="game-modal"
 					style={{
 						position: "fixed",
 						top: "50%",
@@ -128,7 +153,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 						zIndex: 1000
 					}}
 				>
-					<p>Game Over!</p>
+					<p>{gameOver ? "Game Over!" : "You Win!"}</p>
 					<button onClick={handleRestart}>Try Again?</button>
 				</div>
 			)}
