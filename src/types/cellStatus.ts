@@ -1,1 +1,1 @@
-export type CellStatus = 'hidden' | 'revealed' | 'flagged';
+export type CellStatus = 'hidden' | 'revealed' | 'flagged' |'exploded';

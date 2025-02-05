@@ -171,4 +171,28 @@ describe("Gameboard Component", () => {
 			expect(window.getComputedStyle(cell00).backgroundColor).toBe("rgb(128, 128, 128)");
 		});
 	});
+	
+	test("clicking on a mine reveals all cells", async () => {
+		const gridSize: [number, number] = [3, 3];
+		const minePositions: Coordinate[] = [[0, 0]];
+		render(<Gameboard gridSize={gridSize} minePositions={minePositions} />);
+		await waitFor(() => {
+			const cells = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			expect(cells.length).toBe(9);
+		});
+		const mineCell = screen.getByTestId("cell-mine");
+		fireEvent.click(mineCell);
+		await waitFor(() => {
+			const allCells = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			allCells.forEach(cell => {
+				expect(window.getComputedStyle(cell).backgroundColor).toBe("rgb(255, 218, 185)");
+			});
+		});
+	});
 });
