@@ -23,9 +23,25 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 	}, [gridSize, minePositions]);
 	
 	function handleCellClick(rowIndex: number, colIndex: number) {
-		const newStates = cellStates.map((row) => [...row]);
-		newStates[rowIndex][colIndex] = "revealed";
-		setCellStates(newStates);
+		setCellStates((prevStates) => {
+			const newStates = prevStates.map((row) => [...row]);
+			newStates[rowIndex][colIndex] = "revealed";
+			return newStates;
+		});
+	}
+	
+	function handleCellRightClick(e: React.MouseEvent<HTMLDivElement>, rowIndex: number, colIndex: number) {
+		e.preventDefault();
+		setCellStates((prevStates) => {
+			const newStates = prevStates.map((row) => [...row]);
+			const currentStatus = newStates[rowIndex][colIndex];
+			if (currentStatus === "revealed") {
+				return prevStates;
+			}
+			newStates[rowIndex][colIndex] =
+				currentStatus === "flagged" ? "hidden" : "flagged";
+			return newStates;
+		});
 	}
 	
 	return (
@@ -51,7 +67,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 							key={`${rowIndex}-${colIndex}`}
 							data-testid={cell === "*" ? "cell-mine" : "cell"}
 							onClick={() => handleCellClick(rowIndex, colIndex)}
-							
+							onContextMenu={(e) => handleCellRightClick(e, rowIndex, colIndex)}
 							style={{
 								width: "40px",
 								height: "40px",
