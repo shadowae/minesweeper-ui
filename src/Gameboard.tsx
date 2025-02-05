@@ -21,7 +21,13 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 		);
 		setCellStates(initialStates);
 	}, [gridSize, minePositions]);
-
+	
+	function handleCellClick(rowIndex: number, colIndex: number) {
+		const newStates = cellStates.map((row) => [...row]);
+		newStates[rowIndex][colIndex] = "revealed";
+		setCellStates(newStates);
+	}
+	
 	return (
 		<div
 			style={{
@@ -44,6 +50,8 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 						<div
 							key={`${rowIndex}-${colIndex}`}
 							data-testid={cell === "*" ? "cell-mine" : "cell"}
+							onClick={() => handleCellClick(rowIndex, colIndex)}
+							
 							style={{
 								width: "40px",
 								height: "40px",
