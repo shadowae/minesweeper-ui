@@ -1,7 +1,9 @@
+import {Coordinate} from "./getMap.tsx";
+
 export function generateMinePositions(
 	[rows, cols]: [number, number],
 	numMines: number
-): number[][] {
+): Coordinate[] {
 	const positions = new Set<string>();
 	
 	while (positions.size < numMines) {
@@ -10,5 +12,8 @@ export function generateMinePositions(
 		positions.add(`${row},${col}`);
 	}
 	
-	return Array.from(positions).map((pos) => pos.split(",").map(Number));
+	return Array.from(positions).map((pos) => {
+		const parts = pos.split(",").map(Number);
+		return [parts[0], parts[1]] as [number, number];
+	});
 }
