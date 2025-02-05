@@ -2,6 +2,12 @@ import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import Gameboard from "./Gameboard";
 import { Coordinate } from "./utils/getMap";
 
+vi.mock('react-confetti', () => {
+	return {
+		default: () => <div data-testid="confetti" />
+	};
+});
+
 describe("Gameboard Component", () => {
 	test("renders a 3x3 grid with 1 mine and all non-mine cells are hidden", async () => {
 		const gridSize: [number, number] = [3, 3];
@@ -213,6 +219,30 @@ describe("Gameboard - Explosion Icon", () => {
 		fireEvent.click(mineCell);
 		await waitFor(() => {
 			expect(mineCell.textContent).toBe("💥");
+		});
+	});
+});
+
+describe("Gameboard - Explosion and Confetti", () => {
+	test("clicking on a mine shows explosion icon and plays confetti animation", async () => {
+		const gridSize: [number, number] = [3, 3];
+		const minePositions: Coordinate[] = [[0, 0]];
+		render(<Gameboard gridSize={gridSize} minePositions={minePositions} />);
+		await waitFor(() => {
+			const cells = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			expect(cells.length).toBe(9);
+		});
+		const mineCell = screen.getByTestId("cell-mine");
+		fireEvent.click(mineCell);
+		await waitFor(() => {
+			expect(mineCell.textContent).toBe("💥");
+		});
+		await waitFor(() => {
+			const confetti = screen.getByTestId("confetti");
+			expect(confetti).toBeInTheDocument();
 		});
 	});
 });
