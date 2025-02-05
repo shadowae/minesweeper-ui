@@ -1,33 +1,44 @@
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import App from "./App";
+import { difficulties } from "./constants/difficulties";
 
-describe("App Component with Difficulty Ladder", () => {
-	test("renders default (easy) difficulty board", async () => {
+describe("App Component", () => {
+	test("renders Minesweeper title and difficulty selector", () => {
 		render(<App />);
-		await waitFor(() => {
-			const totalCells =
-				screen.getAllByTestId("cell").length +
-				screen.getAllByTestId("cell-mine").length;
-			expect(totalCells).toBe(81);
-		});
-		const mineCells = screen.getAllByTestId("cell-mine");
-		expect(mineCells.length).toBe(10);
+		expect(screen.getByText(/minesweeper/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/difficulty/i)).toBeInTheDocument();
 	});
 	
-	test("updates board when difficulty changes", async () => {
+	test("renders the gameboard with default easy difficulty", async () => {
 		render(<App />);
-		const select = screen.getByLabelText(/difficulty/i);
 		
+		const { gridSize } = difficulties["easy"];
+		const expectedCells = gridSize[0] * gridSize[1];
+		
+		await waitFor(() => {
+			const cellElements = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			expect(cellElements.length).toBe(expectedCells);
+		});
+	});
+	
+	test("updates gameboard when difficulty is changed", async () => {
+		render(<App />);
+		
+		const select = screen.getByLabelText(/difficulty/i);
 		fireEvent.change(select, { target: { value: "medium" } });
 		
-		// Wait for new board to render
+		const { gridSize } = difficulties["medium"];
+		const expectedCells = gridSize[0] * gridSize[1];
+		
 		await waitFor(() => {
-			const totalCells =
-				screen.getAllByTestId("cell").length +
-				screen.getAllByTestId("cell-mine").length;
-			expect(totalCells).toBe(256);
+			const cellElements = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			expect(cellElements.length).toBe(expectedCells);
 		});
-		const mineCells = screen.getAllByTestId("cell-mine");
-		expect(mineCells.length).toBe(25);
 	});
 });

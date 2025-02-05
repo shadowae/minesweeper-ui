@@ -1,21 +1,27 @@
-// Gameboard.tsx
 import { useEffect, useState } from "react";
 import getMap, {Coordinate, Grid} from "./utils/getMap";
 // import "./Gameboard.css";
+import {CellStatus} from "./types/cellStatus.ts";
 
 interface GameBoardProps {
-	gridSize: Coordinate;  // e.g., [rows, columns]
-	minePositions: Coordinate[];   // e.g., [[1,1], [2,2]]
+	gridSize: Coordinate;
+	minePositions: Coordinate[];
 }
 
 function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 	const [map, setMap] = useState<Grid>([]);
+	const [cellStates, setCellStates] = useState<CellStatus[][]>([]);
 	
 	useEffect(() => {
-		// Generate the grid using the provided grid size and mine positions.
+		const newMap = getMap(gridSize, minePositions);
 		setMap(getMap(gridSize, minePositions));
+		
+		const initialStates: CellStatus[][] = newMap.map((row) =>
+			row.map(() => 'hidden')
+		);
+		setCellStates(initialStates);
 	}, [gridSize, minePositions]);
-	
+
 	return (
 		<div
 			style={{
@@ -24,24 +30,36 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 			}}
 		>
 			{map.map((row, rowIndex) =>
-				row.map((cell, colIndex) => (
-					<div
-						key={`${rowIndex}-${colIndex}`}
-						data-testid={cell === "*" ? "cell-mine" : "cell"}
-						style={{
-							width: "40px",
-							height: "40px",
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "center",
-							border: "2px solid lightblue",
-							backgroundColor: "peachpuff",
-							color: "black",
-						}}
-					>
-						{cell === "." ? "" : cell}
-					</div>
-				))
+				row.map((cell, colIndex) => {
+					const status = cellStates[rowIndex]?.[colIndex] || "hidden";
+					
+					let content = "";
+					if (status === "revealed") {
+						content = cell === "." ? "" : cell.toString();
+					} else if (status === "flagged") {
+						content = "🚩";
+					}
+					
+					return (
+						<div
+							key={`${rowIndex}-${colIndex}`}
+							data-testid={cell === "*" ? "cell-mine" : "cell"}
+							style={{
+								width: "40px",
+								height: "40px",
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								border: "2px solid lightblue",
+								backgroundColor: status === "revealed" ? "peachpuff" : "gray",
+								cursor: "pointer",
+								userSelect: "none",
+							}}
+						>
+							{content}
+						</div>
+					);
+				})
 			)}
 		</div>
 	);
