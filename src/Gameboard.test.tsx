@@ -196,3 +196,23 @@ describe("Gameboard Component", () => {
 		});
 	});
 });
+
+describe("Gameboard - Explosion Icon", () => {
+	test("mine cell shows explosion icon after clicking", async () => {
+		const gridSize: [number, number] = [3, 3];
+		const minePositions: Coordinate[] = [[0, 0]];
+		render(<Gameboard gridSize={gridSize} minePositions={minePositions} />);
+		await waitFor(() => {
+			const cells = [
+				...screen.getAllByTestId("cell"),
+				...screen.getAllByTestId("cell-mine")
+			];
+			expect(cells.length).toBe(9);
+		});
+		const mineCell = screen.getByTestId("cell-mine");
+		fireEvent.click(mineCell);
+		await waitFor(() => {
+			expect(mineCell.textContent).toBe("💥");
+		});
+	});
+});

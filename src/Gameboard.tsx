@@ -23,9 +23,11 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 	
 	function handleCellClick(rowIndex: number, colIndex: number) {
 		if (map[rowIndex][colIndex] === "*") {
-			setCellStates((prevStates) =>
-				prevStates.map((row) => row.map(() => "revealed"))
-			);
+			setCellStates((prevStates: CellStatus[][] ) => {
+				const newStates = prevStates.map((row) => row.map((): CellStatus => "revealed"));
+				newStates[rowIndex][colIndex] = "exploded";
+				return newStates;
+			});
 			return;
 		}
 		setCellStates((prevStates) => {
@@ -41,7 +43,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 		setCellStates((prevStates) => {
 			const newStates = prevStates.map((row) => [...row]);
 			const currentStatus = newStates[rowIndex][colIndex];
-			if (currentStatus === "revealed") return prevStates;
+			if (currentStatus === "revealed" || currentStatus === "exploded") return prevStates;
 			newStates[rowIndex][colIndex] = currentStatus === "flagged" ? "hidden" : "flagged";
 			return newStates;
 		});
@@ -62,6 +64,8 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 						content = cell === "." ? "" : cell.toString();
 					} else if (status === "flagged") {
 						content = "🚩";
+					} else if (status === "exploded") {
+						content = "💥";
 					}
 					return (
 						<div
@@ -76,7 +80,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 								alignItems: "center",
 								justifyContent: "center",
 								border: "2px solid lightblue",
-								backgroundColor: status === "revealed" ? "peachpuff" : "gray",
+								backgroundColor: status === "revealed" || status === "exploded" ? "peachpuff" : "gray",
 								cursor: "pointer",
 								userSelect: "none"
 							}}
