@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import getMap, {Coordinate, Grid} from "./utils/getMap";
-// import "./Gameboard.css";
-import {CellStatus} from "./types/cellStatus.ts";
+import getMap, { Coordinate, Grid } from "./utils/getMap";
+import { CellStatus } from "./types/cellStatus.ts";
 
 interface GameBoardProps {
 	gridSize: Coordinate;
@@ -14,7 +13,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 	
 	useEffect(() => {
 		const newMap = getMap(gridSize, minePositions);
-		setMap(getMap(gridSize, minePositions));
+		setMap(newMap);
 		
 		const initialStates: CellStatus[][] = newMap.map((row) =>
 			row.map(() => 'hidden')
@@ -24,6 +23,7 @@ function Gameboard({ gridSize, minePositions }: GameBoardProps) {
 	
 	function handleCellClick(rowIndex: number, colIndex: number) {
 		setCellStates((prevStates) => {
+			if (prevStates[rowIndex][colIndex] === "flagged") return prevStates;
 			const newStates = prevStates.map((row) => [...row]);
 			newStates[rowIndex][colIndex] = "revealed";
 			return newStates;

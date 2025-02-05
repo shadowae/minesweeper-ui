@@ -143,4 +143,32 @@ describe("Gameboard Component", () => {
 			expect(window.getComputedStyle(cell00).backgroundColor).toBe("rgb(128, 128, 128)");
 		});
 	});
+	
+	test("left click does not reveal a flagged cell", async () => {
+		const gridSize: [number, number] = [3, 3];
+		const minePositions: Coordinate[] = [];
+		render(<Gameboard gridSize={gridSize} minePositions={minePositions} />);
+		
+		await waitFor(() => {
+			const cells = [
+				...screen.getAllByTestId("cell"),
+				...screen.queryAllByTestId("cell-mine")
+			];
+			expect(cells.length).toBe(9);
+		});
+		
+		const cell00 = screen.getAllByTestId("cell")[0];
+		fireEvent.contextMenu(cell00);
+		
+		await waitFor(() => {
+			expect(cell00.textContent).toBe("🚩");
+		});
+		
+		fireEvent.click(cell00);
+		
+		await waitFor(() => {
+			expect(cell00.textContent).toBe("🚩");
+			expect(window.getComputedStyle(cell00).backgroundColor).toBe("rgb(128, 128, 128)");
+		});
+	});
 });
