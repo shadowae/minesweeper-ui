@@ -2,6 +2,8 @@
 
 A Minesweeper game UI built with React. This project renders a grid-based Minesweeper game where cells can be empty, display a number (indicating nearby mines), or contain a mine. The UI supports cell revealing on left click and flagging on right click, and is fully tested with Vitest and React Testing Library.
 
+🎮 **[Play Live Demo](https://minesweeper-ui.netlify.app/)**
+
 ## Features
 
 - **Dynamic Grid Rendering:** Configure grid size and mine positions
@@ -9,6 +11,10 @@ A Minesweeper game UI built with React. This project renders a grid-based Minesw
 - **Game Over and Win Conditions:** Display explosion icons, confetti animation, and a modal for restarting the game
 - **Automated Testing:** Comprehensive test suite using Vitest and React Testing Library
 - **Responsive Layout:** Grid-based design that adjusts based on game configuration
+
+## Live Demo
+
+Try out the game at: [https://minesweeper-ui.netlify.app/](https://minesweeper-ui.netlify.app/)
 
 ## Getting Started
 
@@ -106,3 +112,9 @@ This project is licensed under the MIT License.
 ## Contact
 
 For questions or feedback, please reach out at satishk002work@gmail.com.
+
+## Deployment
+
+The application is deployed on Netlify and automatically deploys from the main branch.
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d35732a4-9a02-4815-b98d-1b4f6093a76d/deploy-status)](https://app.netlify.com/sites/minesweeper-ui/deploys)
